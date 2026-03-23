@@ -1,19 +1,29 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 
 const app = express();
+
+// database
 const db = new sqlite3.Database('./db.sqlite');
 
 db.run("CREATE TABLE IF NOT EXISTS flips(result TEXT)");
 
-app.use(express.static('public'));
+// static files (IMPORTANT FIX)
+app.use(express.static(path.join(__dirname, 'public')));
 
+// route
 app.get('/flip', (req, res) => {
-    const result = Math.random() > 0.5 ? "Heads" : "Tails";
+  const result = Math.random() > 0.5 ? "Heads" : "Tails";
 
-    db.run("INSERT INTO flips(result) VALUES(?)", [result]);
+  db.run("INSERT INTO flips(result) VALUES(?)", [result]);
 
-    res.json({ result });
+  res.json({ result });
 });
 
-app.listen(3000, () => console.log("Server running"));
+// ✅ PORT FIX (VERY IMPORTANT FOR RENDER)
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
+});
