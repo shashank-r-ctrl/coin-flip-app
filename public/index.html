@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Coin Flip</title>
+
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    #result {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    #coin {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      background: white;
+      color: black;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: gray;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <h1>🪙 Heads or Tails</h1>
+
+  <h2 id="result">Click to Flip</h2>
+
+  <img id="coin" src="" alt="coin">
+
+  <br>
+
+  <button onclick="flip()">Flip Coin</button>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
