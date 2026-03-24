@@ -1,25 +1,41 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
 
-// DB
-const db = new sqlite3.Database('./db.sqlite');
+// LOCAL MYSQL (optional for viva)
+// const mysql = require('mysql2');
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "YOUR_PASSWORD",
+//   database: "coin_db"
+// });
 
-db.run("CREATE TABLE IF NOT EXISTS flips(result TEXT)");
+// db.connect(err => {
+//   if (err) console.log(err);
+//   else console.log("MySQL Connected");
+// });
 
-// Static files
+// MEMORY (for deployment)
+let flips = [];
+
+// static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route
+// route
 app.get('/flip', (req, res) => {
   const result = Math.random() > 0.5 ? "Heads" : "Tails";
-  db.run("INSERT INTO flips(result) VALUES(?)", [result]);
+
+  // MySQL insert (for viva)
+  // db.query("INSERT INTO flips(result) VALUES(?)", [result]);
+
+  flips.push(result);
+
   res.json({ result });
 });
 
-// PORT FIX
+// PORT
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
