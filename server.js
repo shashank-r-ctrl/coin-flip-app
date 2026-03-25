@@ -4,37 +4,52 @@ const mysql = require('mysql2');
 
 const app = express();
 
-// MySQL connection (env variables from Render)
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: true }
-});
+// DB connection (SAFE MODE)
+let db;
 
-db.connect(err => {
-  if (err) console.log("DB Error:", err);
-  else console.log("MySQL Connected");
-});
+try {
+  db = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: true }
+  });
 
-// create table
-db.query("CREATE TABLE IF NOT EXISTS flips(result VARCHAR(10))");
+  db.connect(err => {
+    if (err) {
+      console.log("DB FAILED ❌");
+      db = null; // disable DB
+    } else {
+      console.log("DB CONNECTED ✅");
+      db.query("CREATE TABLE IF NOT EXISTS flips(result VARCHAR(10))");
+    }
+  });
+
+} catch {
+  db = null;
+}
 
 // static
 app.use(express.static(path.join(__dirname, 'public')));
 
-// flip API
+// flip route (SAFE)
 app.get('/flip', (req, res) => {
   const result = Math.random() > 0.5 ? "Heads" : "Tails";
 
-  db.query("INSERT INTO flips(result) VALUES(?)", [result]);
+  if (db) {
+    db.query("INSERT INTO flips(result) VALUES(?)", [result], (err) => {
+      if (err) console.log("Insert error");
+    });
+  }
 
   res.json({ result });
 });
 
-// history API (NEW 🔥)
+// history route (SAFE)
 app.get('/history', (req, res) => {
+  if (!db) return res.json([]);
+
   db.query("SELECT * FROM flips", (err, results) => {
     if (err) return res.json([]);
     res.json(results);
@@ -45,5 +60,5 @@ app.get('/history', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log("Server running");
 });
