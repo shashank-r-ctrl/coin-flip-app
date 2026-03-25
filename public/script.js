@@ -3,6 +3,10 @@ function flipCoin() {
     .then(res => res.json())
     .then(data => {
       document.getElementById('result').textContent = data.result;
+    })
+    .catch(err => {
+      console.log(err);
+      alert("Backend error aa raha hai");
     });
 }
 
@@ -18,5 +22,6 @@ function loadHistory() {
         li.textContent = item.result;
         list.appendChild(li);
       });
-    });
+    })
+    .catch(err => console.log(err));
 }
