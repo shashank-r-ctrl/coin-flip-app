@@ -1,23 +1,22 @@
-async function flip() {
-  const coin = document.getElementById("coin");
-  const resultText = document.getElementById("result");
+function flipCoin() {
+  fetch('/flip')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('result').textContent = data.result;
+    });
+}
 
-  // animation feel
-  coin.style.transform = "rotateY(180deg)";
-  resultText.innerText = "Flipping...";
+function loadHistory() {
+  fetch('/history')
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById('history');
+      list.innerHTML = "";
 
-  const res = await fetch('/flip');
-  const data = await res.json();
-
-  setTimeout(() => {
-    resultText.innerText = data.result;
-
-    if (data.result === "Heads") {
-      coin.src = "heads.png";
-    } else {
-      coin.src = "tails.png";
-    }
-
-    coin.style.transform = "rotateY(0deg)";
-  }, 300);
+      data.reverse().forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.result;
+        list.appendChild(li);
+      });
+    });
 }
