@@ -9,10 +9,12 @@ function flipCoin() {
       .then(data => {
         document.getElementById('result').textContent = data.result;
 
-        // you can later use 2 images if you want
-        coin.src = "coin.png";
-      })
-      .catch(() => alert("Backend error aa raha hai"));
+        if (data.result === "Heads") {
+          coin.src = "heads.png";
+        } else {
+          coin.src = "tails.png";
+        }
+      });
 
     coin.classList.remove('flip');
   }, 600);
