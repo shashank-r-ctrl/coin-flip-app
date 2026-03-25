@@ -1,13 +1,21 @@
 function flipCoin() {
-  fetch('/flip')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('result').textContent = data.result;
-    })
-    .catch(err => {
-      console.log(err);
-      alert("Backend error aa raha hai");
-    });
+  const coin = document.getElementById('coin');
+
+  coin.classList.add('flip');
+
+  setTimeout(() => {
+    fetch('/flip')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('result').textContent = data.result;
+
+        // you can later use 2 images if you want
+        coin.src = "coin.png";
+      })
+      .catch(() => alert("Backend error aa raha hai"));
+
+    coin.classList.remove('flip');
+  }, 600);
 }
 
 function loadHistory() {
@@ -22,6 +30,5 @@ function loadHistory() {
         li.textContent = item.result;
         list.appendChild(li);
       });
-    })
-    .catch(err => console.log(err));
+    });
 }

@@ -4,7 +4,6 @@ const mysql = require('mysql2');
 
 const app = express();
 
-// DB connection (SAFE MODE)
 let db;
 
 try {
@@ -19,7 +18,7 @@ try {
   db.connect(err => {
     if (err) {
       console.log("DB FAILED ❌");
-      db = null; // disable DB
+      db = null;
     } else {
       console.log("DB CONNECTED ✅");
       db.query("CREATE TABLE IF NOT EXISTS flips(result VARCHAR(10))");
@@ -30,23 +29,18 @@ try {
   db = null;
 }
 
-// static
 app.use(express.static(path.join(__dirname, 'public')));
 
-// flip route (SAFE)
 app.get('/flip', (req, res) => {
   const result = Math.random() > 0.5 ? "Heads" : "Tails";
 
   if (db) {
-    db.query("INSERT INTO flips(result) VALUES(?)", [result], (err) => {
-      if (err) console.log("Insert error");
-    });
+    db.query("INSERT INTO flips(result) VALUES(?)", [result]);
   }
 
   res.json({ result });
 });
 
-// history route (SAFE)
 app.get('/history', (req, res) => {
   if (!db) return res.json([]);
 
@@ -56,7 +50,6 @@ app.get('/history', (req, res) => {
   });
 });
 
-// port
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
